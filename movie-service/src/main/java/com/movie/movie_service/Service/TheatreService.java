@@ -11,12 +11,12 @@ public interface TheatreService {
     TheatreDTO createTheatre(@Valid TheatreRequestDTO requestDTO);
 
     TheatreDTO getTheatreById(Long id);
-    
-    Page<TheatreDTO> getTheatresByCity(String city);
 
     TheatreDTO updateTheatre(Long id, @Valid TheatreRequestDTO requestDTO);
 
     void deleteTheatre(Long id);
 
     Page<TheatreDTO> getAllTheatres(int pageNo, int pageSize);
+
+    Page<TheatreDTO> getTheatresByCity(String city, int pageNo, int pageSize);
 }

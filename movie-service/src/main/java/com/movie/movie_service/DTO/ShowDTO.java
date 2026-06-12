@@ -2,6 +2,7 @@ package com.movie.movie_service.DTO;
 
 import com.movie.movie_service.Helper.ShowStatus;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ShowDTO {
     private Long id;
     private Long movieId;
@@ -25,4 +27,5 @@ public class ShowDTO {
     private Double ticketPrice;
     private ShowStatus status;
     private List<SeatDTO> seats;
+    private LocalTime endTime;
 }

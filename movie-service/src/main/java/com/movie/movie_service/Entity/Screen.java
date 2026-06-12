@@ -17,6 +17,13 @@ import java.util.Set;
 @AllArgsConstructor
 @Table(
         name = "screens",
+        indexes = {
+                @Index(name = "idx_screen_theatre_id", columnList = "theatre_id"),
+                @Index(name = "idx_screen_type", columnList = "screenType"),
+                @Index(name = "idx_screen_theatre_type", columnList = "theatre_id, screenType"),
+                @Index(name = "idx_screen_name", columnList = "screenName"),
+                @Index(name = "idx_screen_total_seats", columnList = "totalSeats")
+        },
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_screen_theatre",
@@ -42,15 +49,28 @@ public class Screen {
     private Theatre theatre;
 
     @OneToMany(mappedBy = "screen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Show> shows = new HashSet<>();
+    private Set<Show> showsList = new HashSet<>();
+
+    @OneToMany(mappedBy = "screen", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Seat> seatsList = new HashSet<>();
 
     public void addShow(Show show) {
-        shows.add(show);
+        showsList.add(show);
         show.setScreen(this);
     }
 
     public void removeShow(Show show) {
-        shows.remove(show);
+        showsList.remove(show);
         show.setScreen(null);
+    }
+
+    public void addSeats(Seat seat) {
+        seatsList.add(seat);
+        seat.setScreen(this);
+    }
+
+    public void removeSeats(Seat seat) {
+        seatsList.remove(seat);
+        seat.setScreen(null);
     }
 }

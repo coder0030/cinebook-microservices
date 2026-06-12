@@ -1,5 +1,5 @@
 package com.movie.movie_service.Helper;
 
 public enum Genre {
-    ACTION, COMEDY, DRAMA
+    ACTION, COMEDY, DRAMA, SCI_FIC, THRILLER, HORROR, ROMANCE
 }

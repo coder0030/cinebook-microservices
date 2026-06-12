@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +51,7 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Transactional
     @Override
     public UserDTO registerUser(UserRequestDTO requestDTO) {
         validateRequest(requestDTO.getEmail(), null);
@@ -76,6 +78,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.convertEntityToDTO(user);
     }
 
+    @Transactional
     @Override
     public UserDTO updateUser(Long userId, UpdateUserRequestDTO userDTO) {
         User user = findById(userId);
@@ -99,6 +102,7 @@ public class UserServiceImpl implements UserService {
         return userMapper.convertEntityToDTO(userRepository.save(user));
     }
 
+    @Transactional
     @Override
     public void deleteUser(Long userId) {
         User user = findById(userId);

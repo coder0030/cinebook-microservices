@@ -1,24 +1,24 @@
 package com.movie.movie_service.DTO;
 
-import com.movie.movie_service.Helper.SeatType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class SeatDTO {
+public class ShowSeatDTO {
     private Long id;
-    private String seatNumber;
-    private String rowLabel;
-    private SeatType seatType;
     private Boolean isBooked;
     private Double price;
+    private LocalDateTime bookingTime;
     private Long showId;
-    private Long screenId;
-    private String screenName;
-    private Long theatreId;
+    private Long seatId;
+    private String seatLocation;
+    private String movieName;
+    private String theatreName;
 }

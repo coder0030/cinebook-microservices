@@ -16,10 +16,16 @@ import java.util.List;
 @AllArgsConstructor
 @Table(
         name = "shows",
+        indexes = {
+                @Index(name = "idx_show_movie_date", columnList = "movie_id, showDate"),
+                @Index(name = "idx_show_theatre_date", columnList = "theatre_id, showDate"),
+                @Index(name = "idx_show_screen_date", columnList = "screen_id, showDate"),
+                @Index(name = "idx_show_movie_theatre_date", columnList = "movie_id, theatre_id, showDate")
+        },
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "uk_show_screen_datetime",
-                        columnNames = {"screen_id", "showDate", "showTime"}
+                        columnNames = {"screen_id", "showDate", "showTime", "endTime"}
                 )
         }
 )
@@ -30,17 +36,13 @@ public class Show {
     private Long id;
 
     @Column(nullable = false)
-    private Long movieId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "screen_id", nullable = false)
-    private Screen screen;
-
-    @Column(nullable = false)
     private LocalDate showDate;
 
     @Column(nullable = false)
     private LocalTime showTime;
+
+    @Column(nullable = false)
+    private LocalTime endTime;
 
     private Integer availableSeats;
 
@@ -50,18 +52,28 @@ public class Show {
     @Enumerated(EnumType.STRING)
     private ShowStatus status;
 
-    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Seat> seats = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "movie_id", nullable = false)
+    private Movie movie;
 
-    public void addSeat(Seat seat) {
-        seats.add(seat);
-        seat.setShow(this);
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "screen_id", nullable = false)
+    private Screen screen;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "theatre_id", nullable = false)
+    private Theatre theatre;
+
+    @OneToMany(mappedBy = "show", cascade = CascadeType.ALL)
+    private List<ShowSeat> showSeatsList = new ArrayList<>();
+
+    public void addShowSeat(ShowSeat showSeat) {
+        showSeatsList.add(showSeat);
+        showSeat.setShow(this);
     }
 
-    public void removeSeat(Seat seat) {
-        seats.remove(seat);
-        seat.setShow(null);
+    public void removeShowSeats(ShowSeat showSeat) {
+        showSeatsList.remove(showSeat);
+        showSeat.setShow(null);
     }
-
-
 }
