@@ -3,6 +3,7 @@ package com.movie.movie_service.Service;
 import com.movie.movie_service.DTO.SeatDTO;
 import com.movie.movie_service.RequestDTO.SeatRequestDTO;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,9 +22,9 @@ public interface SeatService {
 
     void deleteSeat(Long id);
 
-    List<SeatDTO> createMultipleSeats(@Valid List<SeatRequestDTO> requestDTOs);
+    Page<SeatDTO> createMultipleSeats(@Valid List<SeatRequestDTO> requestDTOs);
 
-    List<SeatDTO> getSeatsByShow(Long showId, int pageNo, int pageSize);
+    Page<SeatDTO> getSeatsByShow(Long showId, int pageNo, int pageSize);
 
-    List<SeatDTO> getAvailableSeatsByShow(Long showId, int pageNo, int pageSize);
+    List<SeatDTO> getAvailableSeatsByShow(Long showId);
 }

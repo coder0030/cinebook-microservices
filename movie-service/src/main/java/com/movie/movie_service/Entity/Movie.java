@@ -56,6 +56,9 @@ public class Movie {
 
     private String posterUrl;
 
+    @Column(nullable = false)
+    private Boolean isActive = false;
+
     @Enumerated(EnumType.STRING)
     private MovieStatus status;
 
@@ -70,5 +73,10 @@ public class Movie {
     public void removeShows(Show show) {
         showsList.remove(show);
         show.setMovie(null);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        isActive = true;
     }
 }

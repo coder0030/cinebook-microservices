@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -34,21 +36,22 @@ public class Seat {
 
     private String rowLabel;
 
+    @Column(nullable = false)
+    private Boolean isActive = false;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private SeatType seatType;
 
-    private Boolean isBooked;
-
     @Column(nullable = false)
-    private Double price;
+    private Boolean isBooked = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "screen_id", nullable = false)
     private Screen screen;
 
     @OneToMany(mappedBy = "seat", cascade = CascadeType.ALL)
-    private Set<ShowSeat> showSeatsList = new HashSet<>();
+    private List<ShowSeat> showSeatsList = new ArrayList<>();
 
     public void addShowSeat(ShowSeat showSeat) {
         showSeatsList.add(showSeat);
@@ -62,5 +65,10 @@ public class Seat {
 
     public String getSeatLocation() {
         return rowLabel + seatNumber;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        isActive = true;
     }
 }

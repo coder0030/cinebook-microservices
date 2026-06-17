@@ -15,7 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/theatres")
+@RequestMapping("/movies/theatres")
 @RequiredArgsConstructor
 @Tag(name = "Theatre operations", description = "APIs for theatre registration, update, and other operations.")
 public class TheatreController {

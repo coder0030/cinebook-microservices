@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class ShowSeatMapper {
 
     public ShowSeat convertRequestDTOToEntity(ShowSeatRequestDTO requestDTO, ShowSeat showSeat) {
-        showSeat.setBooked(requestDTO.getIsBooked());
+        showSeat.setIsBooked(requestDTO.getIsBooked());
         showSeat.setPrice(requestDTO.getPrice());
         showSeat.setBookingTime(requestDTO.getBookingTime());
         return showSeat;
@@ -18,7 +18,7 @@ public class ShowSeatMapper {
     public ShowSeatDTO convertEntityToDTO(ShowSeat showSeat) {
         return ShowSeatDTO.builder()
                 .id(showSeat.getId())
-                .isBooked(showSeat.getBooked())
+                .isBooked(showSeat.getIsBooked())
                 .price(showSeat.getPrice())
                 .bookingTime(showSeat.getBookingTime())
                 .showId(showSeat.getShow() != null ? showSeat.getShow().getId() : null)

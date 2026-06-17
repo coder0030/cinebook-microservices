@@ -99,7 +99,7 @@ public class TheatreServiceImpl implements TheatreService {
     @Override
     public void deleteTheatre(Long id) {
         Theatre theatre = findTheatreById(id);
-        theatre.setActive(false);
+        theatre.setIsActive(false);
         theatreRepository.save(theatre);
     }
 

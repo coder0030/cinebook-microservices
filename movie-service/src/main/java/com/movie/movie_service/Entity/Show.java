@@ -46,6 +46,8 @@ public class Show {
 
     private Integer availableSeats;
 
+    private Boolean isActive;
+
     @Column(nullable = false)
     private Double ticketPrice;
 
@@ -75,5 +77,10 @@ public class Show {
     public void removeShowSeats(ShowSeat showSeat) {
         showSeatsList.remove(showSeat);
         showSeat.setShow(null);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        isActive = true;
     }
 }

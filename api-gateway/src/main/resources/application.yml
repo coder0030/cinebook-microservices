@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      routes:
+        - id: movie-service
+          uri: lb://MOVIE-SERVICE
+          predicates:
+            - Path=/api/v1/movies/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: movieCB
+                fallbackUri: forward:/fallback/movie-service
+
+        - id: booking-service
+          uri: lb://BOOKING-SERVICE
+          predicates:
+            - Path=/api/v1/bookings/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: bookingCB
+                fallbackUri: forward:/fallback/booking-service
+
+        - id: notification-service
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/api/v1/notifications/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: notificationCB
+                fallbackUri: forward:/fallback/notification-service
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/v1/users/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userCB
+                fallbackUri: forward:/fallback/user-service
+
+jwt:
+  secret: jspjow3ou029028u32ujlajlskoaLSDp9ei2k3jppsjljflwj3923jJP9EIP

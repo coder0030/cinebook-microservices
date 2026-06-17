@@ -41,4 +41,8 @@ public class SeatRequestDTO {
     @NotNull(message = "Show ID is required")
     @Schema(description = "ID of the show this seat belongs to", example = "123", required = true, minimum = "1")
     private Long showId;
+
+    @NotNull(message = "Screen ID is required")
+    @Schema(description = "ID of the show this seat belongs to", example = "123", required = true, minimum = "1")
+    private Long screenId;
 }

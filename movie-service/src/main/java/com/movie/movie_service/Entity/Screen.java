@@ -44,6 +44,9 @@ public class Screen {
     @Enumerated(EnumType.STRING)
     private ScreenType screenType;
 
+    @Column(nullable = false)
+    private Boolean isActive = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "theatre_id", nullable = false)
     private Theatre theatre;
@@ -72,5 +75,10 @@ public class Screen {
     public void removeSeats(Seat seat) {
         seatsList.remove(seat);
         seat.setScreen(null);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        isActive = true;
     }
 }

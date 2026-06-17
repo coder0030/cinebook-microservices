@@ -28,4 +28,17 @@ public class GlobalExceptionHandler {
         ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage(), 422, LocalDateTime.now());
         return new ResponseEntity<>(error, HttpStatus.NOT_ACCEPTABLE);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponseDTO> resourceNotFound(ResourceNotFoundException ex) {
+        ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage(), 422, LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.NOT_ACCEPTABLE);
+    }
+
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponseDTO> conflictExceptionException(ConflictException ex) {
+        ErrorResponseDTO error = new ErrorResponseDTO(ex.getMessage(), 422, LocalDateTime.now());
+        return new ResponseEntity<>(error, HttpStatus.NOT_ACCEPTABLE);
+    }
 }

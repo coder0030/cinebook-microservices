@@ -45,7 +45,8 @@ public class Theatre {
 
     private Integer totalScreens;
 
-    private boolean isActive;
+    @Column(nullable = false)
+    private Boolean isActive = false;
 
     @OneToMany(mappedBy = "theatre", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Screen> screensList = new HashSet<>();

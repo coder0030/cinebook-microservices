@@ -24,6 +24,9 @@ public class ShowSeat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private Boolean isActive = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "show_id", nullable = false)
     private Show show;
@@ -32,12 +35,20 @@ public class ShowSeat {
     @JoinColumn(name = "seat_id", nullable = false)
     private Seat seat;
 
-    private boolean isBooked;
+    @Column(nullable = false)
+    private Boolean isBooked = false;
+
     private LocalDateTime bookingTime;
     private Double price;
 
-    public boolean getBooked() {
-        return isBooked;
+    public void setIsBooked(boolean booked) {
+        isBooked = booked;
     }
+
+    @PrePersist
+    protected void onCreate() {
+        isActive = true;
+    }
+
 }
 
