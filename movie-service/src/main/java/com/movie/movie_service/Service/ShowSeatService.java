@@ -13,4 +13,8 @@ public interface ShowSeatService {
     ShowSeatDTO updateShowSeatPrice(Long id, Double price);
 
     void deleteShowSeat(Long id);
+
+    boolean checkShowsAndSeatBooked(Long seatId, Long showId);
+
+    Double getSeatPrice(Long seatId, Long showId);
 }

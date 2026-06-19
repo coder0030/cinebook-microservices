@@ -129,4 +129,16 @@ public class ShowController {
         showService.deleteShow(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Check Show exists", description = "Checking show existence ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Show exists"),
+            @ApiResponse(responseCode = "404", description = "Show not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error.")
+    })
+    @GetMapping("/{showId}")
+    public ResponseEntity<Boolean> checkShowsExists(@PathVariable("showId") Long showId) {
+        Boolean exists = showService.checkShowExists(showId);
+        return ResponseEntity.ok(exists);
+    }
 }

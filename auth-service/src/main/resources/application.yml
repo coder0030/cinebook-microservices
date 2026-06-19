@@ -1,0 +1,88 @@
+server:
+  port: 8088
+  servlet:
+    context-path: /api/v1
+
+jwt:
+  secret: ajogjwoue023uojwlajAKJAEJO98uwpPLFMELJ2OKAsaefo283pMLVLE
+  expiration: 86400000  # 24 hours in milliseconds
+  refresh-expiration: 604800000  # 7 days in milliseconds
+
+spring:
+  application:
+    name: auth-service
+
+  datasource:  # Fixed indentation - should be under spring
+    url: jdbc:mysql://localhost:3306/authdb?useSSL=false&serverTimezone=UTC
+    username: root
+    password: Pooja@1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:  # Fixed indentation - should be under datasource
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:  # Fixed indentation - should be under spring
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 20
+        one-indexed-parameters: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+
+# Optional: Resilience4j Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      authService:
+        register-health-indicator: true
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        event-consumer-buffer-size: 10
+        record-exceptions:
+          - org.springframework.web.client.HttpServerErrorException
+          - java.io.IOException
+          - java.net.SocketTimeoutException
+        ignore-exceptions:
+          - org.springframework.web.client.HttpClientErrorException.BadRequest
+
+  retry:
+    instances:
+      authService:
+        max-attempts: 3
+        wait-duration: 2s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers
+  health:
+    circuitbreakers:
+      enabled: true

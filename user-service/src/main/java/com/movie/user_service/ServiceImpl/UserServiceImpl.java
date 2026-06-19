@@ -1,6 +1,5 @@
 package com.movie.user_service.ServiceImpl;
 
-import com.movie.user_service.DTO.BookingDTO;
 import com.movie.user_service.DTO.UserDTO;
 import com.movie.user_service.Entity.User;
 import com.movie.user_service.ExceptionHandler.InvalidCredentialsException;
@@ -8,15 +7,10 @@ import com.movie.user_service.ExceptionHandler.UserAlreadyExistException;
 import com.movie.user_service.ExceptionHandler.UserNotFoundException;
 import com.movie.user_service.Mapper.UserMapper;
 import com.movie.user_service.Repository.UserRepository;
-import com.movie.user_service.RequestDTO.LoginRequestDTO;
 import com.movie.user_service.RequestDTO.UpdateUserRequestDTO;
 import com.movie.user_service.RequestDTO.UserRequestDTO;
 import com.movie.user_service.Service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,41 +29,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private User checkUserForLogin(String email) {
-        User user = userRepository.findByEmailAndIsActiveTrue(email);
-        if(user == null) {
-            throw new UserNotFoundException("User email: " + email + " not exists");
-        }
-        return user;
-    }
-
     private User findById(Long userId) {
         User user = userRepository.findByIdAndIsActiveTrue(userId);
         if(user == null) {
             throw new UserNotFoundException("User id: " + userId + " not exists");
         }
         return user;
-    }
-
-    @Transactional
-    @Override
-    public UserDTO registerUser(UserRequestDTO requestDTO) {
-        validateRequest(requestDTO.getEmail(), null);
-        User user = userMapper.convertRequestDTOToEntity(requestDTO, new User());
-        user.setPassword(passwordEncoder.encode(requestDTO.getPassword()));
-        return userMapper.convertEntityToDTO(userRepository.save(user));
-    }
-
-    @Override
-    public String loginUser(LoginRequestDTO loginRequest) {
-        User user = checkUserForLogin(loginRequest.getEmail());
-        String encodedPassword = user.getPassword();
-        boolean isMatch = passwordEncoder.matches(loginRequest.getPassword(), encodedPassword);
-
-        if(!isMatch) {
-            throw new InvalidCredentialsException("User credentials are not correct, Please try again.");
-        }
-        return "Login successful! Welcome " + user.getName();
     }
 
     @Override
@@ -108,5 +73,30 @@ public class UserServiceImpl implements UserService {
         User user = findById(userId);
         user.setIsActive(false);
         userRepository.save(user);
+    }
+
+    @Override
+    public Boolean checkUserExists(Long userId) {
+        return userRepository.existsByIdAndIsActiveTrue(userId);
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        User user = userRepository.findByEmailAndIsActiveTrue(email);
+        if(user == null) {
+            throw new UserNotFoundException("User email: " + email + " not exists");
+        }
+
+        return user;
+    }
+
+    @Override
+    public boolean existsByEmailAndIdNot(String email, Long id) {
+        return userRepository.existsByEmailAndIsActiveTrueAndIdNot(email, id);
+    }
+
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
     }
 }

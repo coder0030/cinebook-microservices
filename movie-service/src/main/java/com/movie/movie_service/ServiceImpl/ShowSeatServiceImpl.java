@@ -74,4 +74,30 @@ public class ShowSeatServiceImpl implements ShowSeatService {
         showSeat.setIsActive(false);
         showSeatRepository.save(showSeat);
     }
+
+    @Override
+    public boolean checkShowsAndSeatBooked(Long seatId, Long showId) {
+        ShowSeat showSeat = showSeatRepository.findBySeat_IdAndShow_IdAndIsActiveTrue(seatId, showId);
+        if(showSeat == null) {
+            throw new ResourceNotFoundException("seatId: " + seatId + " for showId: " + showId +
+                    " not exists.");
+        }
+
+        if(showSeat.getIsBooked().equals(Boolean.TRUE)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public Double getSeatPrice(Long seatId, Long showId) {
+        ShowSeat showSeat = showSeatRepository.findBySeat_IdAndShow_IdAndIsActiveTrue(seatId, showId);
+        if(showSeat == null) {
+            throw new ResourceNotFoundException("seatId: " + seatId + " for showId: " + showId +
+                    " not exists.");
+        }
+
+        return showSeat.getPrice();
+    }
 }

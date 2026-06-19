@@ -25,4 +25,6 @@ public interface ShowService {
     List<ShowDTO> getShowsByScreenAndDate(Long screenId, LocalDate date, int pageNo, int pageSize);
 
     List<ShowDTO> getShowsByDate(LocalDate date, int pageNo, int pageSize);
+
+    Boolean checkShowExists(Long showId);
 }

@@ -88,4 +88,32 @@ public class ShowSeatController {
         showSeatService.deleteShowSeat(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Check Show and Seat Booking Status",
+            description = "Check if a specific seat is booked for a particular show")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Booking status retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Show or Seat not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error.")
+    })
+    @GetMapping("/{seatId}/shows/{showId}/booked")  // CHANGED: Added /booked
+    public ResponseEntity<Boolean> checkShowsAndSeatBooked(@PathVariable("seatId") Long seatId,
+                                                           @PathVariable("showId") Long showId) {
+        boolean isBooked = showSeatService.checkShowsAndSeatBooked(seatId, showId);
+        return ResponseEntity.ok(isBooked);
+    }
+
+    @Operation(summary = "Get Seat Price",
+            description = "Retrieve the price of a specific seat for a particular show")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Seat price retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "Show or Seat not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error.")
+    })
+    @GetMapping("/{seatId}/shows/{showId}/price")  // CHANGED: Added /price
+    public ResponseEntity<Double> getSeatPrice(@PathVariable("seatId") Long seatId,
+                                               @PathVariable("showId") Long showId) {
+        Double price = showSeatService.getSeatPrice(seatId, showId);
+        return ResponseEntity.ok(price);
+    }
 }

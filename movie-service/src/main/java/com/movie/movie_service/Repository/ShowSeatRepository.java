@@ -13,4 +13,6 @@ public interface ShowSeatRepository extends JpaRepository<ShowSeat, Long> {
     Page<ShowSeat> findByShow_IdAndIsActiveTrue(Long showId, Pageable pageable);
 
     Page<ShowSeat> findByShow_IdAndSeat_IsBookedFalse(Long showId, Pageable pageable);
+
+    ShowSeat findBySeat_IdAndShow_IdAndIsActiveTrue(Long seatId, Long showId);
 }

@@ -151,6 +151,11 @@ public class ShowServiceImpl implements ShowService {
                 .toList();
     }
 
+    @Override
+    public Boolean checkShowExists(Long showId) {
+        return showRepository.existsByIdAndIsActiveTrue(showId);
+    }
+
     private ShowDTO toDTO(Show show) {
         return showMapper.convertEntityToDTO(show);
     }

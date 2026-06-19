@@ -30,4 +30,6 @@ AND :startTime < s.endTime AND :endTime > s.showTime
 """)
 
     List<Show> findOverlappingShows(Long id, LocalDate showDate, LocalTime startTime, LocalTime endTime, Long excludeShowId);
+
+    boolean existsByIdAndIsActiveTrue(Long showId);
 }
