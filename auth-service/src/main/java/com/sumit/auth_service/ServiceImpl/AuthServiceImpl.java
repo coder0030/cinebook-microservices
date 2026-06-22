@@ -4,13 +4,13 @@ import com.sumit.auth_service.DTO.AuthResponse;
 import com.sumit.auth_service.DTO.UserDTO;
 import com.sumit.auth_service.ExceptionHandler.InvalidCredentialsException;
 import com.sumit.auth_service.ExceptionHandler.UserAlreadyExistException;
-import com.sumit.auth_service.ExceptionHandler.UserNotFoundException;
 import com.sumit.auth_service.Helper.Role;
 import com.sumit.auth_service.RequestDTO.LoginRequest;
 import com.sumit.auth_service.RequestDTO.RegisterUserRequest;
 import com.sumit.auth_service.Security.AuthUtil;
 import com.sumit.auth_service.Service.AuthService;
 import com.sumit.auth_service.Service.UserClient;
+import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             UserDTO user = userClient.findUserByEmail(request.getEmail());
 
-            if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 throw new InvalidCredentialsException("Invalid email or password");
             }
 
@@ -46,8 +46,14 @@ public class AuthServiceImpl implements AuthService {
                     .email(user.getEmail())
                     .name(user.getName())
                     .role(user.getRole())
+                    .message("Authentication successful")
                     .build();
 
+        } catch (FeignException e) {
+            log.error("Feign error during authentication: {}", e.getMessage());
+            throw new InvalidCredentialsException("Authentication service unavailable. Please try again.");
+        } catch (InvalidCredentialsException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error during authentication: {}", e.getMessage());
             throw new InvalidCredentialsException("Authentication failed. Please try again.");
@@ -55,12 +61,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public AuthResponse authenticateFallback(LoginRequest request, Exception ex) {
-        log.error("Fallback executed for authenticate with email: {}, error: {}",
-                request.getEmail(), ex.getMessage());
-
+        log.error("Fallback for authentication: {}", ex.getMessage());
         return AuthResponse.builder()
                 .message("Authentication service is currently unavailable. Please try again later.")
-                .jwt(null)
                 .build();
     }
 
@@ -68,28 +71,25 @@ public class AuthServiceImpl implements AuthService {
     @CircuitBreaker(name = "authService", fallbackMethod = "registerUserFallback")
     @Retry(name = "authService")
     public UserDTO registerUser(RegisterUserRequest request) {
+        validateNewUserEmail(request.getEmail());
+
+        UserDTO userDTO = convertRequestDTOToUserDTO(request);
+        if (userDTO.getRole() == null) {
+            userDTO.setRole(Role.ROLE_USER);
+        }
+
         try {
-            validateRequest(request.getEmail(), null);
-            UserDTO userDTO = convertRequestDTOToUserDTO(request);
-            if (userDTO.getRole() == null) {
-                userDTO.setRole(Role.ROLE_USER);
-            }
-
             UserDTO savedUser = userClient.saveUser(userDTO);
-            log.info("User registered successfully with ID: {}", savedUser.getId());
-
+            log.info("User registered successfully: {}", savedUser.getEmail());
             return savedUser;
-
-        } catch (Exception e) {
-            log.error("Error during registration: {}", e.getMessage());
-            throw new RuntimeException("Registration failed: " + e.getMessage());
+        } catch (FeignException e) {
+            log.error("Feign error during registration: {}", e.getMessage());
+            throw new RuntimeException("Registration service unavailable. Please try again.");
         }
     }
 
     public UserDTO registerUserFallback(RegisterUserRequest request, Exception ex) {
-        log.error("Fallback executed for registerUser with email: {}, error: {}",
-                request.getEmail(), ex.getMessage());
-
+        log.error("Fallback for registration: {}", ex.getMessage());
         return UserDTO.builder()
                 .email(request.getEmail())
                 .name(request.getName())
@@ -97,9 +97,20 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    private void validateRequest(String email, Long id) {
-        if (email != null && userClient.existsByEmailAndIdNot(email, id)) {
-            throw new UserAlreadyExistException("User already exists with email: " + email);
+    private void validateNewUserEmail(String email) {
+        try {
+            boolean exists = userClient.existsByEmail(email);
+            if (exists) {
+                throw new UserAlreadyExistException("User already exists with email: " + email);
+            }
+        } catch (FeignException e) {
+            if (e.status() == 404) {
+                return;
+            }
+            if (e.status() == 401) {
+                throw new RuntimeException("Authentication failed while validating email");
+            }
+            throw new RuntimeException("Failed to validate email: " + e.getMessage());
         }
     }
 
@@ -107,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
         return UserDTO.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
                 .role(request.getRole())
                 .isActive(true)

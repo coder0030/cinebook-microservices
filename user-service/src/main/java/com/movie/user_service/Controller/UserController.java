@@ -112,7 +112,14 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> saveUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.saveUser(user));
+    public ResponseEntity<UserDTO> saveUser(@RequestBody UserDTO userDTO) {
+        UserDTO savedUser = userService.saveUser(userDTO);
+        return ResponseEntity.ok(savedUser);
+    }
+
+    @GetMapping("/exists/email/{email}")
+    public ResponseEntity<Boolean> existsByEmail(@PathVariable String email) {
+        boolean exists = userService.existsByEmail(email);
+        return ResponseEntity.ok(exists);
     }
 }

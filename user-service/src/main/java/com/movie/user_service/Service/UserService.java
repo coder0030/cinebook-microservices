@@ -22,4 +22,6 @@ public interface UserService {
     boolean existsByEmailAndIdNot(String email, Long id);
 
     User saveUser(User user);
+
+    boolean existsByEmail(String email);
 }

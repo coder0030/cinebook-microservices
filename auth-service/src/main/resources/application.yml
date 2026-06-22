@@ -5,26 +5,26 @@ server:
 
 jwt:
   secret: ajogjwoue023uojwlajAKJAEJO98uwpPLFMELJ2OKAsaefo283pMLVLE
-  expiration: 86400000  # 24 hours in milliseconds
-  refresh-expiration: 604800000  # 7 days in milliseconds
+  expiration: 86400000
+  refresh-expiration: 604800000
 
 spring:
   application:
     name: auth-service
 
-  datasource:  # Fixed indentation - should be under spring
+  datasource:
     url: jdbc:mysql://localhost:3306/authdb?useSSL=false&serverTimezone=UTC
     username: root
     password: Pooja@1234
     driver-class-name: com.mysql.cj.jdbc.Driver
-    hikari:  # Fixed indentation - should be under datasource
+    hikari:
       maximum-pool-size: 10
       minimum-idle: 5
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
 
-  jpa:  # Fixed indentation - should be under spring
+  jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
@@ -48,11 +48,15 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
   instance:
     prefer-ip-address: true
-    hostname: localhost
+  server:
+    enable-self-preservation: true
+    eviction-interval-timer-in-ms: 6000
+    response-cache-auto-expiration-in-seconds: 180
 
-# Optional: Resilience4j Configuration
 resilience4j:
   circuitbreaker:
     instances:
@@ -86,3 +90,17 @@ management:
   health:
     circuitbreakers:
       enabled: true
+
+logging:
+  level:
+    com.sumit.auth_service: DEBUG
+    feign: DEBUG
+    org.springframework.web: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full

@@ -1,35 +1,41 @@
 resilience4j:
   circuitbreaker:
-    instance:
+    instances:
       bookingService:
         register-health-indicator: true
         sliding-window-size: 10
-        failure-rate-threadshold: 50
+        failure-rate-threshold: 50
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 3
         automatic-transition-from-open-to-half-open-enabled: true
-
       userService:
         sliding-window-size: 10
-        failure-data-threadshold: 50
+        failure-rate-threshold: 50
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 3
         automatic-transition-from-open-to-half-open-enabled: true
-
-
       showService:
         sliding-window-size: 10
-        failure-data-threadshold: 50
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+      authService:
+        register-health-indicator: true
+        sliding-window-size: 10
+        failure-rate-threshold: 50
         wait-duration-in-open-state: 10s
         permitted-number-of-calls-in-half-open-state: 3
         automatic-transition-from-open-to-half-open-enabled: true
 
   retry:
-    instance:
+    instances:
       bookingService:
         max-attempts: 3
         wait-duration: 2s
-
+      authService:
+        max-attempts: 3
+        wait-duration: 2s
 
   bulkhead:
     instances:
@@ -46,5 +52,4 @@ resilience4j:
 
 feign:
   circuitbreaker:
-    enabled:
-      true
+    enabled: true

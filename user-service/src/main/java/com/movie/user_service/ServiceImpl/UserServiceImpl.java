@@ -37,6 +37,12 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    public UserDTO findByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userMapper.convertEntityToDTO(user);
+    }
+
     @Override
     public UserDTO getUserById(Long userId) {
         User user = findById(userId);
@@ -98,5 +104,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmailAndIsActiveTrue(email);
     }
 }
