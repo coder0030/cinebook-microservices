@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -46,10 +45,15 @@ public class User {
 
     @PrePersist
     protected void onCreate() {
-        isActive = true;
+        if (isActive == null) {
+            isActive = true;
+        }
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        role = Role.USER;
+        // Only set default role if not already set
+        if (role == null) {
+            role = Role.USER;
+        }
     }
 
     @PreUpdate

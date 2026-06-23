@@ -15,20 +15,12 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Request object for user login")
 public class LoginRequest {
 
+    @Schema(description = "Registered email address of the user", example = "sumit@example.com", required = true)
     @NotBlank(message = "Email cannot be blank")
     @Email(message = "Invalid email format")
-    @Schema(
-            description = "Registered email address of the user",
-            example = "sumit@example.com",
-            required = true
-    )
     private String email;
 
+    @Schema(description = "Password associated with the account", example = "Password123", required = true)
     @NotBlank(message = "Password cannot be blank")
-    @Schema(
-            description = "Password associated with the account",
-            example = "Password@123",
-            required = true
-    )
     private String password;
 }

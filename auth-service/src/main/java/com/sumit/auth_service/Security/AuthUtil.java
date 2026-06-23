@@ -22,7 +22,7 @@ public class AuthUtil {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateAccessToken(UserDTO user) {
+    public String generateAccessToken(User user) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", user.getRole());
         claims.put("email", user.getEmail());

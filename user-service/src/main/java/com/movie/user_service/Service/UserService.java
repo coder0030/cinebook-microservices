@@ -21,7 +21,11 @@ public interface UserService {
 
     boolean existsByEmailAndIdNot(String email, Long id);
 
+    boolean existsByEmail(String email);
+
+    User findByEmail(String email);
+
     User saveUser(User user);
 
-    boolean existsByEmail(String email);
+    User saveExistingUser(User user);
 }

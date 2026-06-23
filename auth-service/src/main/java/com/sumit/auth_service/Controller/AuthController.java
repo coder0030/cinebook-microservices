@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +38,7 @@ public class AuthController {
 
     })
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.authenticate(request);
         return ResponseEntity.ok(response);
     }
@@ -52,7 +53,7 @@ public class AuthController {
 
     })
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody RegisterUserRequest request) {
+    public ResponseEntity<UserDTO> register(@Valid @RequestBody RegisterUserRequest request) {
         UserDTO userDTO = authService.registerUser(request);
         return ResponseEntity.ok(userDTO);
     }

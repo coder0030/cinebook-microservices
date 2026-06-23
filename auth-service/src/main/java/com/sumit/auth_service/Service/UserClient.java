@@ -1,18 +1,19 @@
 package com.sumit.auth_service.Service;
 
 import com.sumit.auth_service.DTO.UserDTO;
+import com.sumit.auth_service.Entity.User;
 import com.sumit.auth_service.ServiceImpl.AuthClientFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 @FeignClient(
         name = "user-service",
-        fallbackFactory = AuthClientFallbackFactory.class  // Use fallbackFactory instead of fallback
+        fallbackFactory = AuthClientFallbackFactory.class
 )
 public interface UserClient {
 
     @GetMapping("/api/v1/users/email/{email}")
-    UserDTO findUserByEmail(@PathVariable("email") String email);
+    User findUserByEmail(@PathVariable("email") String email);
 
     @GetMapping("/api/v1/users/{id}")
     UserDTO findUserById(@PathVariable("id") Long id);
@@ -26,4 +27,7 @@ public interface UserClient {
 
     @GetMapping("/api/v1/users/exists/email/{email}")
     boolean existsByEmail(@PathVariable("email") String email);
+
+    @PostMapping("/api/v1/users/existing")
+    User saveExistingUser(@RequestBody User user);
 }

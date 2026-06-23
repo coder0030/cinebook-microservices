@@ -5,18 +5,21 @@ import com.movie.user_service.Entity.User;
 import com.movie.user_service.ExceptionHandler.InvalidCredentialsException;
 import com.movie.user_service.ExceptionHandler.UserAlreadyExistException;
 import com.movie.user_service.ExceptionHandler.UserNotFoundException;
+import com.movie.user_service.Helper.Role;
 import com.movie.user_service.Mapper.UserMapper;
 import com.movie.user_service.Repository.UserRepository;
 import com.movie.user_service.RequestDTO.UpdateUserRequestDTO;
 import com.movie.user_service.RequestDTO.UserRequestDTO;
 import com.movie.user_service.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -37,10 +40,26 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    public UserDTO findByEmail(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return userMapper.convertEntityToDTO(user);
+    public User findByEmail(String email) {
+        User user = userRepository.findByEmailAndIsActiveTrue(email);
+        if(user == null) {
+            throw new UserNotFoundException("User not found with email: " + email);
+        }
+        return user;
+    }
+
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User saveExistingUser(User user) {
+        if(user == null) {
+            log.error("Fallback: CRITICAL: saveExistingUser failed for email: {}", user.getEmail());
+            throw new RuntimeException("User profile update failed. Service is unavailable.");
+        }
+        return userRepository.save(user);
     }
 
     @Override
@@ -99,11 +118,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmailAndIdNot(String email, Long id) {
         return userRepository.existsByEmailAndIsActiveTrueAndIdNot(email, id);
-    }
-
-    @Override
-    public User saveUser(User user) {
-        return userRepository.save(user);
     }
 
     @Override
