@@ -4,8 +4,11 @@ import com.movie.movie_service.DTO.MovieDTO;
 import com.movie.movie_service.RequestDTO.MovieRequestDTO;
 import com.movie.movie_service.Service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,13 +25,14 @@ public class MovieController {
 
     private final MovieService movieService;
 
-    @Operation(summary = "Create a new movie", description = "Add a new movie to the system")
+    @Operation(summary = "Create a new movie", description = "Add a new movie to the system",
+    security = @SecurityRequirement(name = "jwtToken"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Movie created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<MovieDTO> createMovie(@Valid @RequestBody MovieRequestDTO requestDTO) {
         return new ResponseEntity<>(movieService.createMovie(requestDTO), HttpStatus.CREATED);
     }
@@ -39,7 +43,7 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "Movie not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/public/{id}")
     public ResponseEntity<MovieDTO> getMovieById(@PathVariable Long id) {
         return ResponseEntity.ok(movieService.getMovieById(id));
     }
@@ -49,7 +53,7 @@ public class MovieController {
             @ApiResponse(responseCode = "200", description = "Movies retrieved successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping
+    @GetMapping("/public/all")
     public ResponseEntity<Page<MovieDTO>> getAllMovies(
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "20") int pageSize) {
@@ -62,7 +66,7 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "Genre not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/genre/{genre}")
+    @GetMapping("/public/genre/{genre}")
     public ResponseEntity<Page<MovieDTO>> getMoviesByGenre(
             @PathVariable String genre,
             @RequestParam(defaultValue = "0") int pageNo,
@@ -76,7 +80,7 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "Language not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/language/{language}")
+    @GetMapping("/public/language/{language}")
     public ResponseEntity<Page<MovieDTO>> getMoviesByLanguage(
             @PathVariable String language,
             @RequestParam(defaultValue = "0") int pageNo,
@@ -90,7 +94,7 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "Status not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/status/{status}")
+    @GetMapping("/public/status/{status}")
     public ResponseEntity<Page<MovieDTO>> getMoviesByStatus(
             @PathVariable String status,
             @RequestParam(defaultValue = "0") int pageNo,
@@ -98,7 +102,8 @@ public class MovieController {
         return ResponseEntity.ok(movieService.getMoviesByStatus(status, pageNo, pageSize));
     }
 
-    @Operation(summary = "Update Movie", description = "Update an existing movie by its ID")
+    @Operation(summary = "Update Movie", description = "Update an existing movie by its ID",
+            security = @SecurityRequirement(name = "jwtToken"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Movie updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
@@ -112,7 +117,8 @@ public class MovieController {
         return ResponseEntity.ok(movieService.updateMovie(id, requestDTO));
     }
 
-    @Operation(summary = "Delete Movie", description = "Remove a movie from the system")
+    @Operation(summary = "Delete Movie", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Remove a movie from the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Movie deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Movie not found"),

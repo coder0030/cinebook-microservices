@@ -6,6 +6,7 @@ import com.movie.movie_service.Service.TheatreService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,13 +36,14 @@ public class TheatreController {
         return new ResponseEntity<>(theatreService.createTheatre(requestDTO), HttpStatus.CREATED);
     }
 
-    @Operation(summary = "Get Theatre by ID", description = "Retrieve a specific theatre by its ID")
+    @Operation(summary = "Get Theatre by ID", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Retrieve a specific theatre by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Theatre found successfully"),
             @ApiResponse(responseCode = "404", description = "Theatre not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/public/{id}")
     public ResponseEntity<TheatreDTO> getTheatreById(@PathVariable Long id) {
         return ResponseEntity.ok(theatreService.getTheatreById(id));
     }
@@ -51,7 +53,7 @@ public class TheatreController {
             @ApiResponse(responseCode = "200", description = "Theatres retrieved successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping
+    @GetMapping("/public/all")
     public ResponseEntity<Page<TheatreDTO>> getAllTheatres(@RequestParam(defaultValue = "0") int pageNo,
                                                            @RequestParam(defaultValue = "20") int pageSize) {
         return ResponseEntity.ok(theatreService.getAllTheatres(pageNo, pageSize));
@@ -63,14 +65,15 @@ public class TheatreController {
             @ApiResponse(responseCode = "404", description = "No theatres found in this city"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/city/{city}")
+    @GetMapping("/public/city/{city}")
     public ResponseEntity<Page<TheatreDTO>> getTheatresByCity(@PathVariable String city,
                                                               @RequestParam(defaultValue = "0") int pageNo,
                                                               @RequestParam(defaultValue = "20") int pageSize) {
         return ResponseEntity.ok(theatreService.getTheatresByCity(city, pageNo, pageSize));
     }
 
-    @Operation(summary = "Update Theatre", description = "Update an existing theatre by ID")
+    @Operation(summary = "Update Theatre", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Update an existing theatre by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Theatre updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid credentials"),
@@ -84,7 +87,8 @@ public class TheatreController {
         return ResponseEntity.ok(theatreService.updateTheatre(id, requestDTO));
     }
 
-    @Operation(summary = "Delete Theatre", description = "Delete a theatre by ID")
+    @Operation(summary = "Delete Theatre", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Delete a theatre by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Theatre deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Theatre not found"),

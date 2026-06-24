@@ -6,6 +6,7 @@ import com.movie.movie_service.Service.ScreenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +23,15 @@ public class ScreenController {
 
     private final ScreenService screenService;
 
-    @Operation(summary = "Create a new screen", description = "Add a new screen to a theatre")
+    @Operation(summary = "Create a new screen", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Add a new screen to a theatre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Screen created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "404", description = "Theatre not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ScreenDTO> createScreen(@Valid @RequestBody ScreenRequestDTO requestDTO) {
         return new ResponseEntity<>(screenService.createScreen(requestDTO), HttpStatus.CREATED);
     }
@@ -40,7 +42,7 @@ public class ScreenController {
             @ApiResponse(responseCode = "404", description = "Screen not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/public/{id}")
     public ResponseEntity<ScreenDTO> getScreenById(@PathVariable Long id) {
         return ResponseEntity.ok(screenService.getScreenById(id));
     }
@@ -51,7 +53,7 @@ public class ScreenController {
             @ApiResponse(responseCode = "404", description = "Theatre not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/theatre/{theatreId}")
+    @GetMapping("/public/theatre/{theatreId}")
     public ResponseEntity<Page<ScreenDTO>> getScreensByTheatre(
             @PathVariable Long theatreId,
             @RequestParam(defaultValue = "0") int pageNo,
@@ -59,7 +61,8 @@ public class ScreenController {
         return ResponseEntity.ok(screenService.getScreensByTheatre(theatreId, pageNo, pageSize));
     }
 
-    @Operation(summary = "Update Screen", description = "Update an existing screen by its ID")
+    @Operation(summary = "Update Screen", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Update an existing screen by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Screen updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
@@ -73,7 +76,8 @@ public class ScreenController {
         return ResponseEntity.ok(screenService.updateScreen(id, requestDTO));
     }
 
-    @Operation(summary = "Delete Screen", description = "Remove a screen from a theatre")
+    @Operation(summary = "Delete Screen", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Remove a screen from a theatre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Screen deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Screen not found"),

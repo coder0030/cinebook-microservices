@@ -50,7 +50,6 @@ public class User {
         }
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
-        // Only set default role if not already set
         if (role == null) {
             role = Role.USER;
         }

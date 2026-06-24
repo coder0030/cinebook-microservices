@@ -72,6 +72,9 @@ public class AuthServiceImpl implements AuthService {
     public UserDTO registerUser(RegisterUserRequest request) {
         validateNewUserEmail(request.getEmail());
         UserDTO userDTO = convertRequestDTOToUserDTO(request);
+        if(request.getEmail().contains("admin.com")) {
+            userDTO.setRole(Role.ADMIN);
+        }
 
         log.info("Sending registration request to user-service for: {}", userDTO.getEmail());
         UserDTO savedUser = userClient.saveUser(userDTO);

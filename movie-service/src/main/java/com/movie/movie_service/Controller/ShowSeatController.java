@@ -5,6 +5,7 @@ import com.movie.movie_service.Service.ShowSeatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +24,14 @@ public class ShowSeatController {
 
     private final ShowSeatService showSeatService;
 
-    @Operation(summary = "Get ShowSeat by ID", description = "Retrieve a specific show seat by its ID")
+    @Operation(summary = "Get ShowSeat by ID", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Retrieve a specific show seat by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "ShowSeat found successfully"),
             @ApiResponse(responseCode = "404", description = "ShowSeat not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/public/{id}")
     public ResponseEntity<ShowSeatDTO> getShowSeatById(@PathVariable Long id) {
         return ResponseEntity.ok(showSeatService.getShowSeatById(id));
     }
@@ -40,7 +42,7 @@ public class ShowSeatController {
             @ApiResponse(responseCode = "404", description = "Show not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/show/{showId}")
+    @GetMapping("/public/show/{showId}")
     public ResponseEntity<Page<ShowSeatDTO>> getShowSeatsByShow(
             @PathVariable Long showId,
             @RequestParam(defaultValue = "0") int pageNo,
@@ -54,7 +56,7 @@ public class ShowSeatController {
             @ApiResponse(responseCode = "404", description = "Show not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/show/{showId}/available")
+    @GetMapping("/public/show/{showId}/available")
     public ResponseEntity<Page<ShowSeatDTO>> getAvailableShowSeatsByShow(
             @PathVariable Long showId,
             @RequestParam(defaultValue = "0") int pageNo,
@@ -62,7 +64,8 @@ public class ShowSeatController {
         return ResponseEntity.ok(showSeatService.getAvailableShowSeatsByShow(showId, pageNo, pageSize));
     }
 
-    @Operation(summary = "Update ShowSeat price", description = "Update the price of a specific show seat")
+    @Operation(summary = "Update ShowSeat price", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Update the price of a specific show seat")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Price updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid price value"),
@@ -77,7 +80,8 @@ public class ShowSeatController {
         return ResponseEntity.ok(showSeatService.updateShowSeatPrice(id, price));
     }
 
-    @Operation(summary = "Delete ShowSeat", description = "Remove a show seat from a show")
+    @Operation(summary = "Delete ShowSeat", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Remove a show seat from a show")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "ShowSeat deleted successfully"),
             @ApiResponse(responseCode = "404", description = "ShowSeat not found"),
@@ -110,7 +114,7 @@ public class ShowSeatController {
             @ApiResponse(responseCode = "404", description = "Show or Seat not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/{seatId}/shows/{showId}/price")  // CHANGED: Added /price
+    @GetMapping("/public/{seatId}/shows/{showId}/price")  // CHANGED: Added /price
     public ResponseEntity<Double> getSeatPrice(@PathVariable("seatId") Long seatId,
                                                @PathVariable("showId") Long showId) {
         Double price = showSeatService.getSeatPrice(seatId, showId);

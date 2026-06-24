@@ -16,7 +16,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/register")
+    @PostMapping("/public/register")
     public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
         log.info("Registering user with email: {}", userDTO.getEmail());
 

@@ -6,6 +6,7 @@ import com.movie.movie_service.Service.ShowService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,8 @@ public class ShowController {
 
     private final ShowService showService;
 
-    @Operation(summary = "Create a new show", description = "Add a new show to a screen")
+    @Operation(summary = "Create a new show", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Add a new show to a screen")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Show created successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
@@ -34,7 +36,7 @@ public class ShowController {
             @ApiResponse(responseCode = "409", description = "Show time conflict"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ShowDTO> createShow(@Valid @RequestBody ShowRequestDTO requestDTO) {
         return new ResponseEntity<>(showService.createShow(requestDTO), HttpStatus.CREATED);
     }
@@ -45,7 +47,7 @@ public class ShowController {
             @ApiResponse(responseCode = "404", description = "Show not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/public/{id}")
     public ResponseEntity<ShowDTO> getShowById(@PathVariable Long id) {
         return ResponseEntity.ok(showService.getShowById(id));
     }
@@ -56,7 +58,7 @@ public class ShowController {
             @ApiResponse(responseCode = "404", description = "Movie not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/movie/{movieId}")
+    @GetMapping("/public/movie/{movieId}")
     public ResponseEntity<List<ShowDTO>> getShowsByMovie(@PathVariable Long movieId) {
         return ResponseEntity.ok(showService.getShowsByMovie(movieId));
     }
@@ -67,7 +69,7 @@ public class ShowController {
             @ApiResponse(responseCode = "404", description = "Theatre not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/theatre/{theatreId}")
+    @GetMapping("/public/theatre/{theatreId}")
     public ResponseEntity<List<ShowDTO>> getShowsByTheatre(
             @PathVariable Long theatreId,
             @RequestParam(defaultValue = "0") int pageNo,
@@ -81,7 +83,7 @@ public class ShowController {
             @ApiResponse(responseCode = "404", description = "Screen not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/screen/{screenId}/date")
+    @GetMapping("/public/screen/{screenId}/date")
     public ResponseEntity<List<ShowDTO>> getShowsByScreenAndDate(
             @PathVariable Long screenId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
@@ -95,7 +97,7 @@ public class ShowController {
             @ApiResponse(responseCode = "200", description = "Shows retrieved successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/date")
+    @GetMapping("/public/date")
     public ResponseEntity<List<ShowDTO>> getShowsByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(defaultValue = "0") int pageNo,
@@ -103,7 +105,8 @@ public class ShowController {
         return ResponseEntity.ok(showService.getShowsByDate(date, pageNo, pageSize));
     }
 
-    @Operation(summary = "Update Show", description = "Update an existing show by its ID")
+    @Operation(summary = "Update Show", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Update an existing show by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Show updated successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
@@ -118,7 +121,8 @@ public class ShowController {
         return ResponseEntity.ok(showService.updateShow(id, requestDTO));
     }
 
-    @Operation(summary = "Delete Show", description = "Remove a show from a screen")
+    @Operation(summary = "Delete Show", security = @SecurityRequirement(name = "jwtToken"),
+            description = "Remove a show from a screen")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Show deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Show not found"),
@@ -136,7 +140,7 @@ public class ShowController {
             @ApiResponse(responseCode = "404", description = "Show not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error.")
     })
-    @GetMapping("/{showId}")
+    @GetMapping("/public/{showId}")
     public ResponseEntity<Boolean> checkShowsExists(@PathVariable("showId") Long showId) {
         Boolean exists = showService.checkShowExists(showId);
         return ResponseEntity.ok(exists);
