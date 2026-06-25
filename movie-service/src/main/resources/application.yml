@@ -19,6 +19,21 @@ spring:
         default-page-size: 10
         max-page-size: 20
         one-indexed-parameters: true
+    redis:
+      port: 6379
+      host: localhost
+      password:
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+      timeout: 2000ms
+      connect-timeout: 2000ms
+  cache:
+    type: redis
 
 server:
   port: 8081
