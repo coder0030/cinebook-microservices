@@ -23,7 +23,8 @@ public class TheatreController {
 
     private final TheatreService theatreService;
 
-    @Operation(summary = "Create new Theatre", description = "Create a new Theatre")
+    @Operation(summary = "Create new Theatre",
+            security = @SecurityRequirement(name = "jwtToken"), description = "Create a new Theatre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Theatre successfully created."),
             @ApiResponse(responseCode = "400", description = "Invalid credentials"),

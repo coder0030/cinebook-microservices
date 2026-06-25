@@ -68,6 +68,7 @@ public class SeatServiceImpl implements SeatService {
             showSeat.setPrice(requestDTO.getPrice());
             showSeat.setIsBooked(false);
             seat.addShowSeat(showSeat);
+            showSeatRepository.save(showSeat);
         }
 
         Seat savedSeat = seatRepository.save(seat);

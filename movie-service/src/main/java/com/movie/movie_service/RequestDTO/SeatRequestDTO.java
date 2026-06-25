@@ -35,14 +35,17 @@ public class SeatRequestDTO {
 
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.0", message = "Price must be at least 0")
-    @Schema(description = "Base price for this seat", example = "250.0", required = true, minimum = "0.0")
+    @DecimalMax(value = "9999.99", message = "Price cannot exceed 9999.99")
+    @Schema(description = "Base price for this seat", example = "250.0", required = true, minimum = "0.0", maximum = "9999.99")
     private Double price;
 
     @NotNull(message = "Show ID is required")
+    @Min(value = 1, message = "Show ID must be at least 1")
     @Schema(description = "ID of the show this seat belongs to", example = "123", required = true, minimum = "1")
     private Long showId;
 
     @NotNull(message = "Screen ID is required")
-    @Schema(description = "ID of the show this seat belongs to", example = "123", required = true, minimum = "1")
+    @Min(value = 1, message = "Screen ID must be at least 1")
+    @Schema(description = "ID of the screen this seat belongs to", example = "456", required = true, minimum = "1")
     private Long screenId;
 }

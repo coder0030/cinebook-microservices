@@ -16,7 +16,6 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthUtil {
-    // Removed PasswordEncoder - not used
 
     @Value("${jwt.secret}")
     private String secretKey;

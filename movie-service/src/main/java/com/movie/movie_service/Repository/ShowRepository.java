@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -23,13 +24,23 @@ public interface ShowRepository extends JpaRepository<Show, Long> {
     Page<Show> findByShowDateAndIsActiveTrue(LocalDate date, Pageable pageable);
 
 
-    @Query("""
-SELECT s FROM Show s WHERE s.screen.id = :screenId AND s.showDate = :showDate
-AND s.isActive = true AND (:excludeId IS NULL OR s.id <> :excludeId)
-AND :startTime < s.endTime AND :endTime > s.showTime
-""")
 
-    List<Show> findOverlappingShows(Long id, LocalDate showDate, LocalTime startTime, LocalTime endTime, Long excludeShowId);
+    @Query("""
+SELECT s FROM Show s
+WHERE s.screen.id = :screenId
+AND s.showDate = :showDate
+AND s.isActive = true
+AND (:excludeId IS NULL OR s.id <> :excludeId)
+AND :startTime < s.endTime
+AND :endTime > s.showTime
+""")
+    List<Show> findOverlappingShows(
+            @Param("screenId") Long screenId,
+            @Param("showDate") LocalDate showDate,
+            @Param("startTime") LocalTime startTime,
+            @Param("endTime") LocalTime endTime,
+            @Param("excludeId") Long excludeId
+    );
 
     boolean existsByIdAndIsActiveTrue(Long showId);
 }

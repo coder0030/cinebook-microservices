@@ -34,7 +34,7 @@ public class UserController {
         return ResponseEntity.ok(savedUser);
     }
 
-    @GetMapping("/email/{email}")
+    @GetMapping("/public/email/{email}")
     public ResponseEntity<User> findByEmail(@PathVariable String email) {
         User user = userService.findByEmail(email);
         if (user == null) {
@@ -44,11 +44,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("/exists/email/{email}")
+    @GetMapping("/public/exists/email/{email}")
     public ResponseEntity<Boolean> existsByEmail(@PathVariable String email) {
         boolean exists = userService.existsByEmail(email);
         return ResponseEntity.ok(exists);
     }
+
 
     private User convertDTOToEntity(UserDTO dto) {
         User user = new User();

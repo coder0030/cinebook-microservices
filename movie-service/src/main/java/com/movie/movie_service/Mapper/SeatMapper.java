@@ -12,6 +12,7 @@ public class SeatMapper {
         seat.setSeatNumber(requestDTO.getSeatNumber());
         seat.setRowLabel(requestDTO.getRowLabel());
         seat.setSeatType(requestDTO.getSeatType());
+        seat.setPrice(requestDTO.getPrice());
         seat.setIsBooked(requestDTO.getIsBooked() != null ? requestDTO.getIsBooked() : false);
         return seat;
     }
@@ -23,6 +24,7 @@ public class SeatMapper {
                 .rowLabel(seat.getRowLabel())
                 .seatType(seat.getSeatType())
                 .isBooked(seat.getIsBooked())
+                .price(seat.getPrice())
                 .screenId(seat.getScreen() != null ? seat.getScreen().getId() : null)
                 .screenName(seat.getScreen() != null ? seat.getScreen().getScreenName() : null)
                 .theatreId(seat.getScreen() != null && seat.getScreen().getTheatre() != null ?

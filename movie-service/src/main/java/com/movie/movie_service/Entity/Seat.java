@@ -46,6 +46,8 @@ public class Seat {
     @Column(nullable = false)
     private Boolean isBooked = false;
 
+    private Double price;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "screen_id", nullable = false)
     private Screen screen;

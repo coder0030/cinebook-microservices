@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 
 @Data
@@ -55,7 +56,8 @@ public class MovieRequestDTO {
 
     @NotNull(message = "Movie status is required")
     @Schema(description = "Current status of the movie", required = true,
-            example = "RELEASED", allowableValues = {"UPCOMING", "RELEASED", "BLOCKBUSTER", "HIT", "FLOP", "RUNNING", "EXPIRED"})
+            example = "NOW_PLAYING",
+            allowableValues = {"UPCOMING", "NOW_PLAYING", "RELEASED", "BLOCKBUSTER", "HIT", "FLOP", "RUNNING", "EXPIRED", "ENDED"})
     private MovieStatus status;
 
     @Schema(description = "Movie director name", example = "Christopher Nolan", maxLength = 100)

@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 )
 public interface MovieServiceClient {
 
-    @GetMapping("/movies/shows/{showId}")
+    @GetMapping("/api/v1/public/movies/shows/{showId}")
     boolean checkShowsExists(@PathVariable("showId") Long showId);
 
-    @GetMapping("/movies/showseats/{seatId}/shows/{showId}/booked")  // CHANGED: Matches controller
+    @GetMapping("/api/v1/movies/public/showseats/{seatId}/shows/{showId}/booked")
     boolean checkShowsAndSeatBooked(@PathVariable("seatId") Long seatId,
                                     @PathVariable("showId") Long showId);
 
-    @GetMapping("/movies/showseats/{seatId}/shows/{showId}/price")  // CHANGED: Matches controller
+    @GetMapping("/api/v1/movies/public/showseats/{seatId}/shows/{showId}/price")
     Double getSeatPrice(@PathVariable("seatId") Long seatId,
                         @PathVariable("showId") Long showId);
 }
